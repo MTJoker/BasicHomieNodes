@@ -3,7 +3,7 @@
 #include <Homie.h>
 #include <NewPing.h>
 
-class BinaryDistanceNode
+class BinaryDistanceNode : public HomieNode
 {
 public:
 
@@ -14,7 +14,7 @@ public:
     UNAVAILABLE
   };
 
-  BinaryDistanceNode(const char* name, HomieNode& node);
+  BinaryDistanceNode(const char* name);
   void begin(uint8_t triggerPin, uint8_t echoPin, long unavailableThreshold, long measureInterval, long measureHysteresis);
   void setup();
   void loop();
@@ -23,7 +23,6 @@ private:
 
   NewPing* m_pPing;
   const char* m_name;
-  HomieNode& m_node;
   unsigned int m_unavailableThreshold;
   State m_state;
   unsigned long m_lastTimeMeasure;
