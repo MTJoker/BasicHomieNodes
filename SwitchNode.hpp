@@ -2,12 +2,12 @@
 
 #include <Homie.h>
 
-class SwitchNode
+class SwitchNode : public HomieNode
 {
 public:
 
-  SwitchNode(const char* name, HomieNode& node, uint8_t pin);
-  void begin();
+  SwitchNode(const char* name);
+  void begin(long pin);
   void setup();
   void loop();
   bool isPressed() const;
@@ -15,7 +15,6 @@ public:
 private:
 
   const char* m_name;
-  HomieNode& m_node;
   bool m_isPressed;
 
   Bounce m_switch;
