@@ -2,7 +2,6 @@
 
 BinaryDistanceNode::BinaryDistanceNode(const char* name)
 :
-HomieNode(name, "status"),
 m_name(name),
 m_lastTimeMeasure(0),
 m_lastDistance(0),
@@ -14,6 +13,7 @@ m_unavailHysteresis(0),
 m_unavailHysteresisDone(0),
 m_unavailableThreshold(0)
 {
+  m_statusNode = new HomieNode(name, "status");
 }
 
 void BinaryDistanceNode::begin(uint8_t triggerPin, uint8_t echoPin, long unavailableThreshold, long measureInterval, long measureHysteresis)
@@ -27,8 +27,8 @@ void BinaryDistanceNode::begin(uint8_t triggerPin, uint8_t echoPin, long unavail
 
 void BinaryDistanceNode::setup()
 {
-  setProperty("distance").send(String(0));
-  setProperty("state").send("unknown");
+  m_statusNode->setProperty("distance").send(String(0));
+  m_statusNode->setProperty("state").send("unknown");
 }
 
 void BinaryDistanceNode::loop()
@@ -47,7 +47,7 @@ void BinaryDistanceNode::loop()
     
     if(distance != m_lastDistance)
     { 
-      setProperty("distance").send(String(distance)); 
+      m_statusNode->setProperty("distance").send(String(distance)); 
       m_lastDistance = distance;
     }
       
@@ -71,7 +71,7 @@ void BinaryDistanceNode::loop()
       if(m_state != AVAILABLE)
       {
         m_state = AVAILABLE;
-        setProperty("state").send("available");
+        m_statusNode->setProperty("state").send("available");
       }
     }
     else if(m_unavailHysteresisDone >= m_unavailHysteresis)
@@ -81,7 +81,7 @@ void BinaryDistanceNode::loop()
       if(m_state != UNAVAILABLE)
       {
         m_state = UNAVAILABLE;
-        setProperty("state").send("unavailable");
+        m_statusNode->setProperty("state").send("unavailable");
       }
     }
   }

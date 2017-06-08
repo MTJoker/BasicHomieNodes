@@ -3,7 +3,7 @@
 #include <Homie.h>
 #include <NewPing.h>
 
-class BinaryDistanceNode : public HomieNode
+class BinaryDistanceNode
 {
 public:
 
@@ -23,6 +23,7 @@ private:
 
   NewPing* m_pPing;
   const char* m_name;
+  HomieNode* m_statusNode;
   unsigned int m_unavailableThreshold;
   State m_state;
   unsigned long m_lastTimeMeasure;

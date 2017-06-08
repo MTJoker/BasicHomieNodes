@@ -2,7 +2,7 @@
 
 #include <Homie.h>
 
-class SwitchNode : public HomieNode
+class SwitchNode
 {
 public:
 
@@ -16,6 +16,7 @@ private:
 
   const char* m_name;
   bool m_isPressed;
+  HomieNode* m_switchStateNode;
 
   Bounce m_switch;
 };
