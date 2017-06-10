@@ -7,7 +7,7 @@ class SwitchNode
 public:
 
   SwitchNode(const char* name);
-  void begin(long pin);
+  void begin(long pin, long debounceInterval);
   void setup();
   void loop();
   bool isPressed() const;
@@ -15,8 +15,8 @@ public:
 private:
 
   const char* m_name;
-  bool m_isPressed;
   HomieNode* m_switchStateNode;
 
   Bounce m_switch;
+  int m_lastSwitchState;
 };

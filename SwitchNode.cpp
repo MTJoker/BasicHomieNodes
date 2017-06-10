@@ -1,21 +1,19 @@
 #include "SwitchNode.hpp"
 
-const long DEBOUNCE_INTERVAL_DEFAULT = 50;
-
 SwitchNode::SwitchNode(const char* name)
 :
 m_name(name),
-m_isPressed(false)
+m_lastSwitchState(-1)
 {
   m_switchStateNode = new HomieNode(name, "status");
 }
 
-void SwitchNode::begin(long pin)
+void SwitchNode::begin(long pin, long debounceInterval)
 {
   pinMode(pin, INPUT_PULLUP);
 
   m_switch.attach(pin);
-  m_switch.interval(DEBOUNCE_INTERVAL_DEFAULT);  
+  m_switch.interval(debounceInterval);  
 }
 
 void SwitchNode::setup()
@@ -26,23 +24,28 @@ void SwitchNode::setup()
 void SwitchNode::loop()
 {
   m_switch.update();
-  
-  if(m_switch.rose())
+
+  int currentSwitchState = m_switch.read();
+
+  if(currentSwitchState != m_lastSwitchState)
   {
-    Homie.getLogger() << m_name << ": Status is open" << endl;
-    m_switchStateNode->setProperty("status").send("open"); 
-    m_isPressed = false;
-  }
-  else if(m_switch.fell())
-  {
-    Homie.getLogger() << m_name << ": Status is closed" << endl;
-    m_switchStateNode->setProperty("status").send("closed"); 
-    m_isPressed = true;
+    if(HIGH == currentSwitchState)
+    {
+       Homie.getLogger() << m_name << ": Status is open" << endl;
+       m_switchStateNode->setProperty("status").send("open"); 
+    }
+    else
+    {
+      Homie.getLogger() << m_name << ": Status is closed" << endl;
+      m_switchStateNode->setProperty("status").send("closed"); 
+    }
+
+    m_lastSwitchState = currentSwitchState;
   }
 }
 
 bool SwitchNode::isPressed() const
 {
-  return m_isPressed;
+  return (LOW == m_lastSwitchState) ? true : false;
 }
 
